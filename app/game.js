@@ -17,6 +17,8 @@ window.onload = function() {
 	
 	function preload () {
 		game.load.image("hook", "assets/diamond.png");
+		game.load.image("fullhook", "assets/star.png");
+
 		game.load.image("cheese", "assets/cheese.png");
 	
 		game.load.image("mouse", "assets/mouse.png");
@@ -43,11 +45,50 @@ window.onload = function() {
 	}
 
 	function update() {
+		resolveCollisions();
 		updateHook(hook, keys);
 		updateMice(mice);
 
 		draw();
 	}	
+
+	function resolveCollisions() {
+		//first check collisions, then if a collision is found, remove the mouse from the mice array and update hook state
+		var mouseIndex = getCollision();
+		if (mouseIndex >= 0) {
+			var mouseToDelete = mice[mouseIndex];
+			mouseToDelete.sprite.x = -1000;//TODO fix proper delete
+			mice.splice(mouseIndex, 1);
+
+			//update hook state
+			hook.pulling = true;
+			hook.shooting = false;
+			hook.caughtMouse = true;
+
+			hook.sprite.loadTexture('fullhook', 0, false);
+		}
+	}
+
+	function getCollision() {
+		var collidedMouse = -1;
+		if(hook.shooting) {
+			for(var mouseindex in mice) {
+				if(collidedMouse < 0) {	//only catch 1 mouse at a time
+					var mouse = mice[mouseindex];				
+					//lazy collision detection, just compare distance.
+					//if mouse caught, remove from mice array and change hooksprite to caughtmouse sprite.
+					if (Math.sqrt( 
+						((hook.sprite.x - mouse.sprite.x) * (hook.sprite.x - mouse.sprite.x)) + 
+						((hook.sprite.y - mouse.sprite.y) * (hook.sprite.y - mouse.sprite.y))) <
+						hook.collisionDistance) {
+
+						collidedMouse = mouseindex;
+					}
+				}
+			}
+		}
+		return collidedMouse;
+	}
 
 	function draw() {
 		///angles are defined on a range from -180 to +180
