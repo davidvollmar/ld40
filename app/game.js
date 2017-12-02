@@ -105,7 +105,7 @@ window.onload = function() {
 	//resolve collisions between hook and mice
 	function resolveHookCollisions() {
 		//first check collisions, then if a collision is found, remove the mouse from the mice array and update hook state
-		var mouseIndex = getCollision();
+		var mouseIndex = getHookMouseCollision();
 		if (mouseIndex >= 0) {
 			var mouseToDelete = mice[mouseIndex];
 			mouseToDelete.sprite.destroy();
@@ -139,7 +139,7 @@ window.onload = function() {
 		return collidedmice;
 	}
 
-	function getCollision() {
+	function getHookMouseCollision() {
 		var collidedMouse = -1;
 		if(hook.shooting) {
 			for(var mouseindex in mice) {
