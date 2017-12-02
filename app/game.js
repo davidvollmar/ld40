@@ -16,6 +16,7 @@ window.onload = function() {
 
 	var mice = [];
 	var curledMice = [];
+	var cheese = 8;
 	
 	function preload () {
 		game.load.image("hook", "assets/diamond.png");
@@ -66,12 +67,20 @@ window.onload = function() {
 		updateHook(hook, keys);
 		updateMice(mice);
 		updateCurledMice(curledMice);
+		updateGameState();
 	}	
 
+	function updateGameState() {
+		if(cheese <= 0) {
+			//TODO game over
+			console.log(" TODO game over");
+		}
+	}
+
 	function updateHook() {
-		mustSpawnCurleMouse = hook.updateShooting(keys);
+		hook.updateShooting(keys);
 		keys.shootPressed = false;
-		if (mustSpawnCurleMouse) {
+		if (hook.curledMouse) {
 			spawnCurleMouse(hook.sprite.x, hook.sprite.y, hook.sprite.rotation + Math.PI);
 		}
 
@@ -104,6 +113,12 @@ window.onload = function() {
 
 	    mice.map(function(mouse) {
 	        mouse.updateMouse();
+	        if(mouse.pickedupCheese) {
+	        	mouse.pickedupCheese = false;
+	        	//TODO change mouse sprite to mouse_with_cheese
+	        	cheese--;
+	        	console.log("picked up cheese. cheese points: " + cheese);
+	        }
 	    });
 	}
 
@@ -127,6 +142,7 @@ window.onload = function() {
 			hook.pulling = true;
 			hook.shooting = false;
 			hook.caughtMouse = true;
+			cheese++;
 
 			hook.sprite.loadTexture('fullhook', 0, false);
 		}
