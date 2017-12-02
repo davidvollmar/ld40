@@ -8,6 +8,7 @@ var Hook = function() {
 	this.shooting = false;
 	this.pulling = false;
 	this.caughtMouse = false;
+	this.curledMouse = false;
 	this.shootingSpeed = 10;
 	this.pullingMouseSpeed = 3;
 	this.pullingEmptySpeed = 8;
@@ -37,8 +38,14 @@ function updateHookPosition(hook, keys) {
 		if(keys.keyRight.isDown) {
 			hook.sprite.angle += hook.rotationSpeed;
 		}
-		if(keys.keyShoot.isDown) {
-			hook.shooting = true;
+		if(keys.shootPressed) {
+			if(hook.caughtMouse) {
+				curleMouse(hook.sprite.x, hook.sprite.y);
+				hook.curledMouse = true;
+			} else {
+				hook.shooting = true;	
+			}	
+			keys.shootPressed = false;		
 		}
 	}	
 }
@@ -50,11 +57,12 @@ function updateHookState(hook) {
 	}
 	if (hook.pulling && (hook.currentRadius <= hook.defaultRadius)) {
 		hook.pulling = false;
-		if(hook.caughtMouse) {
-			hook.caughtMouse = false;
-			hook.sprite.loadTexture('hook', 0, false);
-		}
 		hook.currentRadius = hook.defaultRadius;
+	}	
+	if(hook.caughtMouse && hook.curledMouse) {
+		hook.caughtMouse = false;
+		hook.curledMouse = false;
+		hook.sprite.loadTexture('hook', 0, false);
 	}
 }
 

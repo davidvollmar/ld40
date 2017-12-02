@@ -44,3 +44,7 @@ function spawnMouse() {
         return new Mouse(window.screen.width, Math.random() * window.screen.height);
     }
 }
+
+function curleMouse() {
+    console.log("curle mouse!");
+}

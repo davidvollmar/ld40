@@ -8,7 +8,8 @@ window.onload = function() {
 	var keys = {
 		keyLeft: null, 
 		keyRight: null,
-		keyShoot: null
+		keyShoot: null,
+		shootPressed: false
 	};
 
 	var hook = new Hook();
@@ -38,10 +39,18 @@ window.onload = function() {
 		//Define input keys
 		keys.keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
 		keys.keyRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
+		//the left and right keys we want to be able to keep pressing, but spacebar should be a one-time hit per press
 		keys.keyShoot = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+		keys.keyShoot.onDown.add(shootPressed);
 
 		//initialize 
 		hook.currentRadius = hook.defaultRadius;
+	}
+
+	function shootPressed() {
+		if(!hook.pulling && !hook.shooting) {
+			keys.shootPressed = true;
+		}
 	}
 
 	function update() {
