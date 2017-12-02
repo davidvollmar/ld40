@@ -1,7 +1,22 @@
-var Mouse = function(x, y) {
-    this.sprite = game.add.sprite(x, y, "mouse");
-    this.sprite.scale.setTo(0.05, 0.05);
-    this.sprite.anchor.setTo(0.5, 0.5);
+class Mouse {
+    constructor(x, y) {
+        this.sprite = game.add.sprite(x, y, "mouse");
+        this.sprite.scale.setTo(0.05, 0.05);
+        this.sprite.anchor.setTo(0.5, 0.5);
+    }
+    
+    twitchMouse() {		
+        var targetX = game.world.centerX;
+        var targetY = game.world.centerY;
+
+        var dX = targetX - this.sprite.x;
+        var dY = targetY - this.sprite.y;
+
+        var x = Math.random() > 0.5? dX/100 : 0;
+        var y = Math.random() > 0.5? dY/100 : 0;
+        this.sprite.x += x;
+        this.sprite.y += y;
+    }
 }
 
 function updateMice(mice) {
@@ -11,19 +26,6 @@ function updateMice(mice) {
     }
 
     mice.map(function(mouse) {
-        twitchMouse(mouse);
+        mouse.twitchMouse();
     });
-}
-
-function twitchMouse(mouse) {		
-    var targetX = game.world.centerX;
-    var targetY = game.world.centerY;
-
-    var dX = targetX - mouse.sprite.x;
-    var dY = targetY - mouse.sprite.y;
-
-    var x = Math.random() > 0.5? dX/100 : 0;
-    var y = Math.random() > 0.5? dY/100 : 0;
-    mouse.sprite.x += x;
-    mouse.sprite.y += y;
 }
