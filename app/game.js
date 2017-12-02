@@ -9,7 +9,7 @@ window.onload = function() {
 
 	function create () {
 		var cheese = game.add.sprite(game.world.centerX, game.world.centerY, "cheese");
-		cheese.scale.setTo(0.1, 0.1);
+		cheese.scale.setTo(0.05, 0.05);
 		cheese.anchor.setTo(0.5, 0.5);
 
 		console.log("Cheese!");
