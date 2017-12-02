@@ -15,6 +15,7 @@ window.onload = function() {
 	var hook = new Hook();
 
 	var mice = [];
+	var curledMice = [];
 	
 	function preload () {
 		game.load.image("hook", "assets/diamond.png");
@@ -27,6 +28,8 @@ window.onload = function() {
 	}
 
 	function create () {
+
+		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.stage.backgroundColor = "#300000";
 		
 		hook.sprite = game.add.sprite(game.world.centerX, game.world.centerY, "hook");
@@ -57,11 +60,16 @@ window.onload = function() {
 		resolveCollisions();
 		updateHook(hook, keys);
 		updateMice(mice);
-
-		draw();
+		updateCurledMice(curledMice);
 	}	
 
 	function resolveCollisions() {
+		resolveHookCollisions();
+		resolveMiceCollisions();
+	}
+
+	//resolve collisions between hook and mice
+	function resolveHookCollisions() {
 		//first check collisions, then if a collision is found, remove the mouse from the mice array and update hook state
 		var mouseIndex = getCollision();
 		if (mouseIndex >= 0) {
@@ -78,6 +86,25 @@ window.onload = function() {
 		}
 	}
 
+	//resolve collisions between curledmice and normal mice
+	function resolveMiceCollisions() {
+		var mouseIndices = getMiceCollisions();
+		for (mouseIndex in mouseIndices) {
+			var mouseToReplace = mice[mouseIndex];
+			mouseToReplace.sprite.destroy();
+			mice.splice(mouseIndex, 1);
+
+			//now create 1 new curledmouse and change the direction of the other one
+
+		}
+	}
+
+	function getMiceCollisions() {
+		var collidedmice = [];
+		//TODO implement
+		return collidedmice;
+	}
+
 	function getCollision() {
 		var collidedMouse = -1;
 		if(hook.shooting) {
@@ -91,6 +118,7 @@ window.onload = function() {
 						((hook.sprite.y - mouse.sprite.y) * (hook.sprite.y - mouse.sprite.y))) <
 						hook.collisionDistance) {
 
+						console.log("COLLIDED");
 						collidedMouse = mouseindex;
 					}
 				}
@@ -99,7 +127,43 @@ window.onload = function() {
 		return collidedMouse;
 	}
 
-	function draw() {
+	function curleMouse() {
+		curledMice.push(new CurleMouse(hook.sprite.x, hook.sprite.y, hook.sprite.rotation + Math.PI));
+	}
+
+	function updateHook(hook, keys) {
+		updateHookPosition(hook, keys);
+		updateHookState(hook);
+	}
+
+
+	function updateHookPosition(hook, keys) {
+		if (hook.shooting || hook.pulling) {
+			if(hook.shooting) {
+				hook.currentRadius += hook.shootingSpeed;
+			}
+			if(hook.pulling) {
+				var pullingSpeed = hook.caughtMouse ? hook.pullingMouseSpeed : hook.pullingEmptySpeed;
+				hook.currentRadius -= pullingSpeed;
+			}
+		} else {//so if (!shooting && !pulling) 
+			if (keys.keyLeft.isDown) {
+				hook.sprite.angle -= hook.rotationSpeed;
+			}
+			if(keys.keyRight.isDown) {
+				hook.sprite.angle += hook.rotationSpeed;
+			}
+			if(keys.shootPressed) {
+				if(hook.caughtMouse) {
+					curleMouse();
+					hook.curledMouse = true;
+				} else {
+					hook.shooting = true;	
+				}	
+				keys.shootPressed = false;		
+			}
+		}
+		
 		///angles are defined on a range from -180 to +180
 		//initially angle is 0
 		//we introduce here 'calcAngle' to simplify the calculations for the rotation along the cheese
@@ -109,6 +173,50 @@ window.onload = function() {
 
 		hook.sprite.x = game.world.centerX + (hook.currentRadius * Math.cos(hook.calcAngle));
 		hook.sprite.y = game.world.centerY + (hook.currentRadius * Math.sin(hook.calcAngle));
+	}
 
+	function updateHookState(hook) {
+		if (hook.shooting && (hook.currentRadius >= hook.maxRadius)) {			
+			hook.pulling = true;
+			hook.shooting = false;
+		}
+		if (hook.pulling && (hook.currentRadius <= hook.defaultRadius)) {
+			hook.pulling = false;
+			hook.currentRadius = hook.defaultRadius;
+		}	
+		if(hook.caughtMouse && hook.curledMouse) {
+			hook.caughtMouse = false;
+			hook.curledMouse = false;
+			hook.sprite.loadTexture('hook', 0, false);
+		}
+	}
+
+	function updateCurledMice(curledMice) {
+		curledMice.map(function(curledMouse) {
+	        curledMouse.move();
+	    });
+	}
+
+	function updateMice(mice) {
+	    if(Math.random() < 0.01 && mice.length < 50) {        
+	        mice.push(spawnMouse());
+	    }
+
+	    mice.map(function(mouse) {
+	        mouse.twitchMouse();
+	    });
+	}
+
+	function spawnMouse() {
+	    var rand = Math.random();
+	    if(rand <= .25) {
+	        return new Mouse(Math.random() * window.screen.width, 0);        
+	    } else if(rand <= .5) {
+	        return new Mouse(Math.random() * window.screen.width, window.screen.height);    
+	    } else if(rand <= .75) {
+	        return new Mouse(0, Math.random() * window.screen.height);
+	    } else {
+	        return new Mouse(window.screen.width, Math.random() * window.screen.height);
+	    }
 	}
 };
