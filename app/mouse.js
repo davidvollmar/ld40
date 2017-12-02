@@ -6,9 +6,9 @@ class Mouse {
         this.sprite.scale.setTo(0.05, 0.05);
         this.sprite.anchor.setTo(0.5, 0.5);
         this.animation = this.sprite.animations.add('wiggle');        
-        this.animation.play(10, true);        
-        this.curling = false;
+        this.animation.play(10, true);
         this.hasCheese = false;
+        this.escaped = false;
         this.pickedupCheese = false;
         this.walkingSpeed = 0.01;
         this.carryingSpeed = 0.0025;
@@ -16,13 +16,13 @@ class Mouse {
 
     updateMouse() {		
         if(this.hasCheese) { 
-            this.moveTowards(this.originX, this.originY, this.carryingSpeed);
+            this.moveTowards(this.originX, this.originY, this.carryingSpeed, "wall");
         } else { 
-            this.moveTowards(game.world.centerX, game.world.centerY, this.walkingSpeed);
+            this.moveTowards(game.world.centerX, game.world.centerY, this.walkingSpeed, "cheese");
         }
     }
 
-    moveTowards(targetX, targetY, speed) {
+    moveTowards(targetX, targetY, speed, debug) {
         var dX = targetX - this.sprite.x;
         var dY = targetY - this.sprite.y;
         
@@ -35,9 +35,17 @@ class Mouse {
         this.sprite.y += y;
         this.sprite.rotation = rot;
 
-        if(Math.sqrt(((dX * dX) + (dY * dY))) < Math.random() * 10) {
-            this.hasCheese = true;
-            this.pickedupCheese = true;
+        console.log("distance to: " + debug + " = " + Math.sqrt(((dX * dX) + (dY * dY))));
+        if(Math.sqrt(((dX * dX) + (dY * dY))) < Math.random() * 30) {
+            //if moving to cheese, pick up, else escape
+            if(!this.hasCheese) {
+                console.log("picked up cheese");
+                this.hasCheese = true;
+                this.pickedupCheese = true;
+            } else {
+                console.log("escaped");
+                this.escaped = true;
+            }                
         }
     }
 }

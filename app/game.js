@@ -64,9 +64,9 @@ window.onload = function() {
 
 	function update() {
 		resolveCollisions();
-		updateHook(hook, keys);
-		updateMice(mice);
-		updateCurledMice(curledMice);
+		updateHook();
+		updateMice();
+		updateCurledMice();
 		updateGameState();
 	}	
 
@@ -89,7 +89,7 @@ window.onload = function() {
 		hook.updateState();
 	}
 
-	function updateCurledMice(curledMice) {
+	function updateCurledMice() {
 		for(curledMouseIndex in curledMice) {
 			var curledMouse = curledMice[curledMouseIndex];
 			curledMouse.move();
@@ -106,14 +106,17 @@ window.onload = function() {
 		}
 	}
 
-	function updateMice(mice) {
-	    if(Math.random() < 0.01 && mice.length < 50) {        
+	function updateMice() {
+	    if(Math.random() < 0.01 && mice.length < 1){//50) {        
 	        mice.push(spawnMouse());
 	    }
+	    
+	    for(mouseIndex in mice) {
+	    	var mouse = mice[mouseIndex];
+	    	mouse.updateMouse();
 
-	    mice.map(function(mouse) {
-	        mouse.updateMouse();
-	        if(mouse.pickedupCheese) {
+	    	//change sprite if picked up cheese
+	    	if(mouse.pickedupCheese) {
 	        	mouse.pickedupCheese = false;
 	        	mouse.animation.destroy();
 	        	mouse.sprite.destroy();
@@ -122,7 +125,13 @@ window.onload = function() {
 	        	mouse.sprite.anchor.setTo(0.5, 0.5);
 	        	cheese--;
 	        }
-	    });
+
+	        //remove if escaped with the cheese
+	        if(mouse.escaped) {
+	        	mice.splice(mouseIndex, 1);
+	        	mouse.sprite.destroy();
+	        }
+	    }
 	}
 
 	// COLLISION HANDLERS
