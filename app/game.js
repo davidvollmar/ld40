@@ -50,11 +50,15 @@ window.onload = function() {
 		hook.currentRadius = hook.defaultRadius;
 	}
 
+	// KEY HANDLERS
+
 	function shootPressed() {
 		if(!hook.pulling && !hook.shooting) {
 			keys.shootPressed = true;
 		}
 	}
+
+	// UPDATES
 
 	function update() {
 		resolveCollisions();
@@ -62,6 +66,36 @@ window.onload = function() {
 		updateMice(mice);
 		updateCurledMice(curledMice);
 	}	
+
+	function updateHook() {
+		spawnCurleMouse = hook.updateShooting(keys);
+		keys.shootPressed = false;
+		if (spawnCurleMouse) {
+			curledMice.push(new CurleMouse(hook.sprite.x, hook.sprite.y, hook.sprite.rotation + Math.PI));
+		}
+
+		hook.updatePosition(keys);
+		hook.updateAngle();
+		hook.updateState();
+	}
+
+	function updateCurledMice(curledMice) {
+		curledMice.map(function(curledMouse) {
+	        curledMouse.move();
+	    });
+	}
+
+	function updateMice(mice) {
+	    if(Math.random() < 0.01 && mice.length < 50) {        
+	        mice.push(spawnMouse());
+	    }
+
+	    mice.map(function(mouse) {
+	        mouse.twitchMouse();
+	    });
+	}
+
+	// COLLISION HANDLERS
 
 	function resolveCollisions() {
 		resolveHookCollisions();
@@ -118,7 +152,6 @@ window.onload = function() {
 						((hook.sprite.y - mouse.sprite.y) * (hook.sprite.y - mouse.sprite.y))) <
 						hook.collisionDistance) {
 
-						console.log("COLLIDED");
 						collidedMouse = mouseindex;
 					}
 				}
@@ -127,86 +160,7 @@ window.onload = function() {
 		return collidedMouse;
 	}
 
-	function curleMouse() {
-		curledMice.push(new CurleMouse(hook.sprite.x, hook.sprite.y, hook.sprite.rotation + Math.PI));
-	}
-
-	function updateHook(hook, keys) {
-		updateHookPosition(hook, keys);
-		updateHookState(hook);
-		updateHookAngle(hook);
-	}
-
-
-	function updateHookPosition(hook, keys) {
-		if (hook.shooting || hook.pulling) {
-			if(hook.shooting) {
-				hook.currentRadius += hook.shootingSpeed;
-			}
-			if(hook.pulling) {
-				var pullingSpeed = hook.caughtMouse ? hook.pullingMouseSpeed : hook.pullingEmptySpeed;
-				hook.currentRadius -= pullingSpeed;
-			}
-		} else {//so if (!shooting && !pulling) 
-			if (keys.keyLeft.isDown) {
-				hook.sprite.angle -= hook.rotationSpeed;
-			}
-			if(keys.keyRight.isDown) {
-				hook.sprite.angle += hook.rotationSpeed;
-			}
-			if(keys.shootPressed) {
-				if(hook.caughtMouse) {
-					curleMouse(hook.sprite.x, hook.sprite.y);
-					hook.curledMouse = true;
-				} else {
-					hook.shooting = true;	
-				}	
-				keys.shootPressed = false;		
-			}
-		}	
-	}
-
-	function updateHookState(hook) {
-		if (hook.shooting && (hook.currentRadius >= hook.maxRadius)) {			
-			hook.pulling = true;
-			hook.shooting = false;
-		}
-		if (hook.pulling && (hook.currentRadius <= hook.defaultRadius)) {
-			hook.pulling = false;
-			hook.currentRadius = hook.defaultRadius;
-		}	
-		if(hook.caughtMouse && hook.curledMouse) {
-			hook.caughtMouse = false;
-			hook.curledMouse = false;
-			hook.sprite.loadTexture('hook', 0, false);
-		}
-	}
-
-	function updateHookAngle(hook) {
-		///angles are defined on a range from -180 to +180
-		//initially angle is 0
-		//we introduce here 'calcAngle' to simplify the calculations for the rotation along the cheese
-		hook.calcAngle = ((hook.sprite.angle + 180) / 360) * 2 * Math.PI;
-		
-		hook.sprite.x = game.world.centerX + (hook.currentRadius * Math.cos(hook.calcAngle));
-		hook.sprite.y = game.world.centerY + (hook.currentRadius * Math.sin(hook.calcAngle));
-	}
-
-	function updateCurledMice(curledMice) {
-		curledMice.map(function(curledMouse) {
-	        curledMouse.move();
-	    });
-	}
-
-	function updateMice(mice) {
-	    if(Math.random() < 0.01 && mice.length < 50) {        
-	        mice.push(spawnMouse());
-	    }
-
-	    mice.map(function(mouse) {
-	        mouse.twitchMouse();
-	    });
-	}
+	// OTHER FUNCTIONS
 
 	function spawnMouse() {
 	    var rand = Math.random();
