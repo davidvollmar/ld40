@@ -10,6 +10,7 @@ class CurleMouse {
         
         this.distance = 75;
         this.speed = 8;
+        this.collisionDistance = 25;
     }
 
     move() {
