@@ -20,12 +20,24 @@ class Mouse {
 }
 
 function updateMice(mice) {
-    if(Math.random() < 0.01 && mice.length < 50) {
-        var newMouse = new Mouse(Math.random() * window.screen.width, Math.random() * window.screen.height);			
-        mice.push(newMouse);
+    if(Math.random() < 0.01 && mice.length < 50) {        
+        mice.push(spawnMouse());
     }
 
     mice.map(function(mouse) {
         mouse.twitchMouse();
     });
+}
+
+function spawnMouse() {
+    var rand = Math.random();
+    if(rand <= .25) {
+        return new Mouse(Math.random() * window.screen.width, 0);        
+    } else if(rand <= .5) {
+        return new Mouse(Math.random() * window.screen.width, window.screen.height);    
+    } else if(rand <= .75) {
+        return new Mouse(0, Math.random() * window.screen.height);
+    } else {
+        return new Mouse(window.screen.width, Math.random() * window.screen.height);
+    }
 }
