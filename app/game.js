@@ -1,12 +1,11 @@
-console.log("hiero");
 window.onload = function() {
-	console.log("here!");
 
 	var game = new Phaser.Game(800, 600, Phaser.AUTO, "", { preload: preload, create: create, update: update });
 	var keyLeft, keyRight;
 	var rotationSpeed = 2;
 	var hook;
 	var hookRotationRadius = 200;
+	var calcangle;
 
 	function preload () {
 		game.load.image("hook", "assets/diamond.png");
@@ -19,15 +18,16 @@ window.onload = function() {
 		
 		hook = game.add.sprite(game.world.centerX, game.world.centerY, "hook");
 		hook.anchor.setTo(0.5, 0.5); 
-		
+
+		var cheese = game.add.sprite(game.world.centerX, game.world.centerY, "cheese");
+		cheese.scale.setTo(0.05, 0.05);
+
 		//Define input keys
 		keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
 		keyRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
 	}
 
-
-	var calcangle;
 	function update() {
 		if (keyLeft.isDown)
 		{
@@ -45,5 +45,6 @@ window.onload = function() {
 		hook.x = game.world.centerX + (hookRotationRadius * Math.cos(calcangle));
 		hook.y = game.world.centerY + (hookRotationRadius * Math.sin(calcangle));
 
+		game.load.image("cheese", "assets/cheese.png");
 	}
 };
