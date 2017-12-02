@@ -39,12 +39,12 @@ class Hook {
 		if (keys.shootPressed) {
 			if (this.caughtMouse) {
 				this.curledMouse = true;
-				return {x: this.sprite.x, y: this.sprite.y};
+				return true;
 			} else {				
 				this.shooting = true;
 			}
 		}
-		return null;
+		return false;
 	}
 
 	updateState() {
