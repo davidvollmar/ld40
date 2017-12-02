@@ -1,21 +1,13 @@
 window.onload = function() {
 
 	var game = new Phaser.Game(800, 600, Phaser.AUTO, "", { preload: preload, create: create, update: update });
-	var keyLeft, keyRight;
-	var hook = 
-	{
-		sprite: null,
-		defaultRadius: 75,
-		currentRadius: 75,
-		maxRadius: 400,
-		calcAngle: 0,
-		rotationSpeed: 2,
-		shooting: false,
-		pulling: false,
-		shootingSpeed: 3,
-		pullingSpeed: 2
+	var hook = new Hook();
+	var keys = {
+		keyLeft: null, 
+		keyRight: null,
+		keyShoot: null
 	};
-
+	
 	function preload () {
 		game.load.image("hook", "assets/diamond.png");
 		game.load.image("cheese", "assets/cheese.png");
@@ -39,9 +31,9 @@ window.onload = function() {
 		mouse.scale.setTo(0.05, 0.05);
 
 		//Define input keys
-		keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
-		keyRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
-		keyShoot = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+		keys.keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
+		keys.keyRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
+		keys.keyShoot = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 		//initialize 
 		hook.currentRadius = hook.defaultRadius;
@@ -49,49 +41,12 @@ window.onload = function() {
 
 	function update() {
 
-		if (hook.shooting || hook.pulling) 
-		{
-			if(hook.shooting)
-			{
-				hook.currentRadius += hook.shootingSpeed;
-			}
-			if(hook.pulling) 
-			{
-				hook.currentRadius -= hook.pullingSpeed;
-			}
-
-			updateHookState();
-		} 
-		else 
-		{//so if (!shooting && !pulling) 
-
-			if (keyLeft.isDown)
-			{
-				hook.sprite.angle -= hook.rotationSpeed;
-			}
-			if(keyRight.isDown) 
-			{
-				hook.sprite.angle += hook.rotationSpeed;
-			}
-			if(keyShoot.isDown)
-			{
-				hook.shooting = true;
-			}
-		}
+		updateHook(hook, keys);
 
 		draw();
 	}
 
-	function updateHookState() {
-		if (hook.shooting && (hook.currentRadius >= hook.maxRadius)) {			
-			hook.pulling = true;
-			hook.shooting = false;
-		}
-		if (hook.pulling && (hook.currentRadius <= hook.defaultRadius)) {
-			hook.pulling = false;
-			hook.currentRadius = hook.defaultRadius;
-		}
-	}
+	
 
 	function draw() {
 		///angles are defined on a range from -180 to +180
