@@ -1,4 +1,4 @@
-var Hook = function()  {
+var Hook = function() {
 	this.sprite = null;
 	this.defaultRadius = 75;
 	this.currentRadius = 75;
@@ -17,30 +17,21 @@ function updateHook(hook, keys) {
 }
 
 function updateHookPosition(hook, keys) {
-	if (hook.shooting || hook.pulling) 
-	{
-		if(hook.shooting)
-		{
+	if (hook.shooting || hook.pulling) {
+		if(hook.shooting) {
 			hook.currentRadius += hook.shootingSpeed;
 		}
-		if(hook.pulling) 
-		{
+		if(hook.pulling) {
 			hook.currentRadius -= hook.pullingSpeed;
 		}
-	} 
-	else 
-	{//so if (!shooting && !pulling) 
-
-		if (keys.keyLeft.isDown)
-		{
+	} else {//so if (!shooting && !pulling) 
+		if (keys.keyLeft.isDown) {
 			hook.sprite.angle -= hook.rotationSpeed;
 		}
-		if(keys.keyRight.isDown) 
-		{
+		if(keys.keyRight.isDown) {
 			hook.sprite.angle += hook.rotationSpeed;
 		}
-		if(keys.keyShoot.isDown)
-		{
+		if(keys.keyShoot.isDown) {
 			hook.shooting = true;
 		}
 	}
