@@ -11,11 +11,14 @@ class Mouse {
 
         var dX = targetX - this.sprite.x;
         var dY = targetY - this.sprite.y;
+        
+        var rot = Math.atan2(dY, dX) - Math.PI / 2;
 
         var x = Math.random() > 0.5? dX/100 : 0;
         var y = Math.random() > 0.5? dY/100 : 0;
         this.sprite.x += x;
         this.sprite.y += y;
+        this.sprite.rotation = rot;
     }
 }
 
