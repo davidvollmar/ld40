@@ -69,10 +69,10 @@ window.onload = function() {
 	}	
 
 	function updateHook() {
-		spawnCurleMouse = hook.updateShooting(keys);
+		mustSpawnCurleMouse = hook.updateShooting(keys);
 		keys.shootPressed = false;
-		if (spawnCurleMouse) {
-			curledMice.push(new CurleMouse(hook.sprite.x, hook.sprite.y, hook.sprite.rotation + Math.PI));
+		if (mustSpawnCurleMouse) {
+			spawnCurleMouse(hook.sprite.x, hook.sprite.y, hook.sprite.rotation + Math.PI);
 		}
 
 		hook.updatePosition(keys);
@@ -81,9 +81,20 @@ window.onload = function() {
 	}
 
 	function updateCurledMice(curledMice) {
-		curledMice.map(function(curledMouse) {
-	        curledMouse.move();
-	    });
+		for(curledMouseIndex in curledMice) {
+			var curledMouse = curledMice[curledMouseIndex];
+			curledMouse.move();
+
+			//remove if out of bounds
+			if(curledMouse.sprite.x > game.windowWidth || 
+	        	curledMouse.sprite.x < 0 ||
+	        	curledMouse.sprite.y < 0 || 
+	        	curledMouse.sprite.y > game.windowHeight) {
+
+				curledMice.splice(curledMouseIndex, 1);
+				curledMouse.sprite.destroy();
+			}
+		}
 	}
 
 	function updateMice(mice) {
@@ -123,21 +134,38 @@ window.onload = function() {
 
 	//resolve collisions between curledmice and normal mice
 	function resolveMiceCollisions() {
-		var mouseIndices = getMiceCollisions();
-		for (mouseIndex in mouseIndices) {
-			var mouseToReplace = mice[mouseIndex];
-			mouseToReplace.sprite.destroy();
-			mice.splice(mouseIndex, 1);
+		for (curledMouseIndex in curledMice) {
+			var curledMouse = curledMice[curledMouseIndex];
+			var mouseIndex = getCurledMouseCollision(curledMouse);
+			if(mouseIndex >= 0) {
+				//increasing the sprite of the curling mouse, to indicate that we picked up another mouse
+				curledMouse.sprite.scale.setTo(0.1, 0.1);
 
-			//now create 1 new curledmouse and change the direction of the other one
-
-		}
+				//deleting the hit mouse
+				var mouseToDelete = mice[mouseIndex];
+				mouseToDelete.sprite.destroy();
+				mice.splice(mouseIndex, 1);
+			}
+		}		
 	}
 
-	function getMiceCollisions() {
-		var collidedmice = [];
-		//TODO implement
-		return collidedmice;
+	function getCurledMouseCollision(curledMouse) {
+		var collidedMouse = -1;
+		for(mouseIndex in mice) {
+			if(collidedMouse < 0) {
+				var mouse = mice[mouseIndex];
+
+				var distance = Math.sqrt( 
+					((curledMouse.sprite.x - mouse.sprite.x) * (curledMouse.sprite.x - mouse.sprite.x)) + 
+					((curledMouse.sprite.y - mouse.sprite.y) * (curledMouse.sprite.y - mouse.sprite.y))
+				);
+
+				if (distance < curledMouse.collisionDistance) {
+					collidedMouse = mouseIndex;
+				}
+			}
+		}
+		return collidedMouse;
 	}
 
 	function getHookMouseCollision() {
@@ -174,5 +202,9 @@ window.onload = function() {
 	    } else {
 	        return new Mouse(window.screen.width, Math.random() * window.screen.height);
 	    }
+	}
+
+	function spawnCurleMouse(x, y, r) {
+		curledMice.push(new CurleMouse(x, y, r));
 	}
 };
