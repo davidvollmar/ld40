@@ -17,6 +17,7 @@ var Hook = function() {
 function updateHook(hook, keys) {
 	updateHookPosition(hook, keys);
 	updateHookState(hook);
+	updateHookAngle(hook);
 }
 
 
@@ -39,7 +40,7 @@ function updateHookPosition(hook, keys) {
 		if(keys.keyShoot.isDown) {
 			hook.shooting = true;
 		}
-	}
+	}	
 }
 
 function updateHookState(hook) {
@@ -55,4 +56,14 @@ function updateHookState(hook) {
 		}
 		hook.currentRadius = hook.defaultRadius;
 	}
+}
+
+function updateHookAngle(hook) {
+	///angles are defined on a range from -180 to +180
+	//initially angle is 0
+	//we introduce here 'calcAngle' to simplify the calculations for the rotation along the cheese
+	hook.calcAngle = ((hook.sprite.angle + 180) / 360) * 2 * Math.PI;
+	
+	hook.sprite.x = game.world.centerX + (hook.currentRadius * Math.cos(hook.calcAngle));
+	hook.sprite.y = game.world.centerY + (hook.currentRadius * Math.sin(hook.calcAngle));
 }

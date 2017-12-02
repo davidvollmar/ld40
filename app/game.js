@@ -48,8 +48,6 @@ window.onload = function() {
 		resolveCollisions();
 		updateHook(hook, keys);
 		updateMice(mice);
-
-		draw();
 	}	
 
 	function resolveCollisions() {
@@ -88,18 +86,5 @@ window.onload = function() {
 			}
 		}
 		return collidedMouse;
-	}
-
-	function draw() {
-		///angles are defined on a range from -180 to +180
-		//initially angle is 0
-		//we introduce here 'calcAngle' to simplify the calculations for the rotation along the cheese
-		hook.calcAngle = ((hook.sprite.angle + 180) / 360) * 2 * Math.PI;
-
-		//when "shooting" the hook, we simply increase the radius.
-
-		hook.sprite.x = game.world.centerX + (hook.currentRadius * Math.cos(hook.calcAngle));
-		hook.sprite.y = game.world.centerY + (hook.currentRadius * Math.sin(hook.calcAngle));
-
 	}
 };
