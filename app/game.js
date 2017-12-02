@@ -7,7 +7,7 @@ window.onload = function() {
 		sprite: null,
 		defaultRadius: 75,
 		currentRadius: 75,
-		maxRadius: 500,
+		maxRadius: 400,
 		calcAngle: 0,
 		rotationSpeed: 2,
 		shooting: false,
@@ -19,6 +19,9 @@ window.onload = function() {
 	function preload () {
 		game.load.image("hook", "assets/diamond.png");
 		game.load.image("cheese", "assets/cheese.png");
+	
+		game.load.image("mouse", "assets/mouse.png");
+		game.load.image("mouse_with_cheese", "assets/mouse.png");
 	}
 
 	function create () {
@@ -31,6 +34,9 @@ window.onload = function() {
 		var cheese = game.add.sprite(game.world.centerX, game.world.centerY, "cheese");
 		cheese.anchor.setTo(0.5, 0.5);
 		cheese.scale.setTo(0.05, 0.05);
+		
+		var mouse = game.add.sprite(0,0, "mouse");
+		mouse.scale.setTo(0.05, 0.05);
 
 		//Define input keys
 		keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
