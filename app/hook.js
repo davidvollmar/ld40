@@ -66,7 +66,7 @@ class Hook {
 	updateAngle() {
 		///angles are defined on a range from -180 to +180
 		//initially angle is 0
-		//we introduce here 'calcAngle' to simplify the calculations for the rotation along the cheese
+		//we introduce here 'calcAngle' to simplify the calculations for the rotation along the cheese		
 		this.calcAngle = ((this.sprite.angle + 180) / 360) * 2 * Math.PI;
 		
 		this.sprite.x = game.world.centerX + (this.currentRadius * Math.cos(this.calcAngle));

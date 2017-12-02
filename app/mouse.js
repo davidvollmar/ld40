@@ -1,11 +1,13 @@
 class Mouse {
     constructor(x, y) {
-        this.sprite = game.add.sprite(x, y, "mouse");
+        this.sprite = game.add.sprite(x, y, 'mouse', 0);
         this.sprite.scale.setTo(0.05, 0.05);
         this.sprite.anchor.setTo(0.5, 0.5);
+        this.animation = this.sprite.animations.add('wiggle');        
+        this.animation.play(10, true);        
         this.curling = false;
     }
-    
+
     updateMouse() {		
         var targetX = game.world.centerX;
         var targetY = game.world.centerY;
