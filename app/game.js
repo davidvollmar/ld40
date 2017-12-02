@@ -26,7 +26,7 @@ window.onload = function() {
 	
 		//game.load.image("mouse", "assets/mouse.png");
 		game.load.spritesheet('mouse', 'assets/mouse2.png', 720, 1430, 2);
-		game.load.image("mouse_with_cheese", "assets/mouse.png");
+		game.load.image("mouse_with_cheese", "assets/mouse_with_cheese.png");
 	}
 
 	function create () {
@@ -115,9 +115,12 @@ window.onload = function() {
 	        mouse.updateMouse();
 	        if(mouse.pickedupCheese) {
 	        	mouse.pickedupCheese = false;
-	        	//TODO change mouse sprite to mouse_with_cheese
+	        	mouse.animation.destroy();
+	        	mouse.sprite.destroy();
+	        	mouse.sprite = game.add.sprite(mouse.sprite.x, mouse.sprite.y, "mouse_with_cheese");
+	        	mouse.sprite.scale.setTo(0.15, 0.15);
+	        	mouse.sprite.anchor.setTo(0.5, 0.5);
 	        	cheese--;
-	        	console.log("picked up cheese. cheese points: " + cheese);
 	        }
 	    });
 	}

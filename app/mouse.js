@@ -28,8 +28,6 @@ class Mouse {
         
         var rot = Math.atan2(dY, dX);
 
-        //var x = Math.random() > 0.5? dX/100 : 0;
-        //var y = Math.random() > 0.5? dY/100 : 0;
         var x = Math.random() > 0.5? dX * speed : 0;
         var y = Math.random() > 0.5? dY * speed : 0;
 
@@ -40,7 +38,6 @@ class Mouse {
         if(Math.sqrt(((dX * dX) + (dY * dY))) < Math.random() * 10) {
             this.hasCheese = true;
             this.pickedupCheese = true;
-            console.log("hasCheese = true");
         }
     }
 }
