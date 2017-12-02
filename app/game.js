@@ -66,7 +66,7 @@ window.onload = function() {
 		var mouseIndex = getCollision();
 		if (mouseIndex >= 0) {
 			var mouseToDelete = mice[mouseIndex];
-			mouseToDelete.sprite.x = -1000;//TODO fix proper delete
+			mouseToDelete.sprite.destroy();
 			mice.splice(mouseIndex, 1);
 
 			//update hook state
