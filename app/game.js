@@ -10,6 +10,9 @@ window.onload = function() {
 	function preload () {
 		game.load.image("hook", "assets/diamond.png");
 		game.load.image("cheese", "assets/cheese.png");
+	
+		game.load.image("mouse", "assets/mouse.png");
+		game.load.image("mouse_with_cheese", "assets/mouse.png");
 	}
 
 	function create () {
@@ -27,6 +30,8 @@ window.onload = function() {
 		keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
 		keyRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
+		var mouse = game.add.sprite(0,0, "mouse");
+		mouse.scale.setTo(0.05, 0.05);
 	}
 
 	function update() {
