@@ -4,12 +4,12 @@ window.onload = function() {
 	var keyLeft, keyRight;
 	var rotationSpeed = 2;
 	var hook;
-	var hookRotationRadius = 200;
+	var hookRotationRadius = 75;
 	var calcangle;
 
 	function preload () {
 		game.load.image("hook", "assets/diamond.png");
-
+		game.load.image("cheese", "assets/cheese.png");
 	}
 
 	function create () {
@@ -20,6 +20,7 @@ window.onload = function() {
 		hook.anchor.setTo(0.5, 0.5); 
 
 		var cheese = game.add.sprite(game.world.centerX, game.world.centerY, "cheese");
+		cheese.anchor.setTo(0.5, 0.5);
 		cheese.scale.setTo(0.05, 0.05);
 
 		//Define input keys
@@ -45,6 +46,5 @@ window.onload = function() {
 		hook.x = game.world.centerX + (hookRotationRadius * Math.cos(calcangle));
 		hook.y = game.world.centerY + (hookRotationRadius * Math.sin(calcangle));
 
-		game.load.image("cheese", "assets/cheese.png");
 	}
 };
