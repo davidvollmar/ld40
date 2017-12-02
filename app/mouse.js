@@ -6,7 +6,7 @@ class Mouse {
         this.curling = false;
     }
     
-    twitchMouse() {		
+    updateMouse() {		
         var targetX = game.world.centerX;
         var targetY = game.world.centerY;
 

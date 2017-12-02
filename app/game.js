@@ -204,7 +204,7 @@ window.onload = function() {
 	    }
 
 	    mice.map(function(mouse) {
-	        mouse.twitchMouse();
+	        mouse.updateMouse();
 	    });
 	}
 
