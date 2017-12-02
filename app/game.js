@@ -47,14 +47,11 @@ window.onload = function() {
 	}
 
 	function update() {
-
 		updateHook(hook, keys);
 		updateMice();
 
 		draw();
-	}
-
-	
+	}	
 
 	function draw() {
 		///angles are defined on a range from -180 to +180
