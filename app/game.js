@@ -1,24 +1,31 @@
 var game;
 
 window.onload = function() {
+	//magic numbers
 	var windowWidth = 800;
 	var windowHeight = 600;
-	
-	game = new Phaser.Game(windowWidth, windowHeight, Phaser.AUTO, "", { preload: preload, create: create, update: update });
+	var cheeseLeft = 8; //whenever a mouse takes a piece, cheese--. if cheese == 0, game over
+	var mouseSpawningProbability = 0.01;
+	var maximumNrOfMice = 10;
+
+	//game init
+	game = new Phaser.Game(windowWidth, windowHeight, Phaser.AUTO, "", { preload: preload, create: create, update: update });	
+	//declare other variables
 	var keys = {
 		keyLeft: null, 
 		keyRight: null,
 		keyShoot: null,
 		shootPressed: false
 	};
-
 	var hook = new Hook();
-
 	var mice = [];
 	var curledMice = [];
-	var cheese = 8;
+
+	//GAME INIT FUNCTIONS
 	
 	function preload () {
+		game.load.image("background", "assets/background.jpeg");
+
 		game.load.image("hook", "assets/diamond.png");
 		game.load.image("fullhook", "assets/star.png");
 
@@ -30,9 +37,7 @@ window.onload = function() {
 	}
 
 	function create () {
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.stage.backgroundColor = "#300000";
+		background = game.add.tileSprite(0, 0, windowWidth, windowHeight, "background");
 		
 		hook.sprite = game.add.sprite(game.world.centerX, game.world.centerY, "hook");
 		hook.sprite.anchor.setTo(0.5, 0.5); 
@@ -50,6 +55,16 @@ window.onload = function() {
 
 		//initialize 
 		hook.currentRadius = hook.defaultRadius;
+
+		//score text top corner
+		text = game.add.text(130, 30, "Cheese Left: " + cheeseLeft + "!", {
+	        font: "32px Arial",
+	        fill: "#ffffff",
+	        align: "left"
+	    });
+
+	    text.anchor.setTo(0.5, 0.5);
+
 	}
 
 	// KEY HANDLERS
@@ -71,7 +86,7 @@ window.onload = function() {
 	}	
 
 	function updateGameState() {
-		if(cheese <= 0) {
+		if(cheeseLeft <= 0) {
 			//TODO game over
 			console.log(" TODO game over");
 		}
@@ -107,7 +122,7 @@ window.onload = function() {
 	}
 
 	function updateMice() {
-	    if(Math.random() < 0.01 && mice.length < 1){//50) {        
+	    if(Math.random() < mouseSpawningProbability && mice.length < maximumNrOfMice) {        
 	        mice.push(spawnMouse());
 	    }
 	    
@@ -123,7 +138,7 @@ window.onload = function() {
 	        	mouse.sprite = game.add.sprite(mouse.sprite.x, mouse.sprite.y, "mouse_with_cheese");
 	        	mouse.sprite.scale.setTo(0.15, 0.15);
 	        	mouse.sprite.anchor.setTo(0.5, 0.5);
-	        	cheese--;
+	        	updateLife(-1);
 	        }
 
 	        //remove if escaped with the cheese
@@ -145,18 +160,22 @@ window.onload = function() {
 	function resolveHookCollisions() {
 		//first check collisions, then if a collision is found, remove the mouse from the mice array and update hook state
 		var mouseIndex = getHookMouseCollision();
-		if (mouseIndex >= 0) {
+		if (mouseIndex >= 0) {			
 			var mouseToDelete = mice[mouseIndex];
-			mouseToDelete.sprite.destroy();
-			mice.splice(mouseIndex, 1);
 
 			//update hook state
 			hook.pulling = true;
 			hook.shooting = false;
 			hook.caughtMouse = true;
-			cheese++;
+			if(mouseToDelete.hasCheese) {				
+				updateLife(1);
+			}
 
 			hook.sprite.loadTexture('fullhook', 0, false);
+
+			//delete caught mouse from mice admin
+			mouseToDelete.sprite.destroy();
+			mice.splice(mouseIndex, 1);			
 		}
 	}
 
@@ -221,7 +240,8 @@ window.onload = function() {
 
 	function spawnMouse() {
 	    var rand = Math.random();
-	    if(rand <= .25) {
+	    var offset  = 100; //place the mice 100 outside of the screen, such that the cleaning up is done neatly outside of the view
+	    /*if(rand <= .25) {
 	        return new Mouse(Math.random() * window.screen.width, 0);        
 	    } else if(rand <= .5) {
 	        return new Mouse(Math.random() * window.screen.width, window.screen.height);    
@@ -229,10 +249,25 @@ window.onload = function() {
 	        return new Mouse(0, Math.random() * window.screen.height);
 	    } else {
 	        return new Mouse(window.screen.width, Math.random() * window.screen.height);
+	    }*/
+	    if(rand <= .25) {
+	        return new Mouse(Math.random() * windowWidth, 0 - offset);        
+	    } else if(rand <= .5) {
+	        return new Mouse(Math.random() * windowWidth, windowHeight + offset);    
+	    } else if(rand <= .75) {
+	        return new Mouse(0 - offset, Math.random() * windowHeight);
+	    } else {
+	        return new Mouse(windowWidth + offset, Math.random() * windowHeight);
 	    }
 	}
 
 	function spawnCurleMouse(x, y, r) {
 		curledMice.push(new CurleMouse(x, y, r));
+	}
+
+	function updateLife(delta) {
+		cheeseLeft += delta;
+
+		text.setText("Cheese Left: " + cheeseLeft + "!");
 	}
 };

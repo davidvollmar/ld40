@@ -12,6 +12,7 @@ class Mouse {
         this.pickedupCheese = false;
         this.walkingSpeed = 0.01;
         this.carryingSpeed = 0.0025;
+        this.requiredProximity = 30;
     }
 
     updateMouse() {		
@@ -35,15 +36,13 @@ class Mouse {
         this.sprite.y += y;
         this.sprite.rotation = rot;
 
-        console.log("distance to: " + debug + " = " + Math.sqrt(((dX * dX) + (dY * dY))));
-        if(Math.sqrt(((dX * dX) + (dY * dY))) < Math.random() * 30) {
+        if(Math.sqrt(((dX * dX) + (dY * dY))) < Math.random() * this.requiredProximity) {
             //if moving to cheese, pick up, else escape
             if(!this.hasCheese) {
-                console.log("picked up cheese");
                 this.hasCheese = true;
                 this.pickedupCheese = true;
+                this.requiredProximity = 100; //doesn't have to be so close to the wall to escape
             } else {
-                console.log("escaped");
                 this.escaped = true;
             }                
         }
