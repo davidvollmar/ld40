@@ -55,6 +55,7 @@ window.onload = function() {
 
 		game.load.image("hook", "assets/claw.png");
 		game.load.image("fullhook", "assets/fullclaw.png");
+		game.load.image("arm", "assets/claw-repeat.png");
 
 		game.load.image("cheese", "assets/cheese.png");
 	
@@ -69,9 +70,11 @@ window.onload = function() {
 		/*music = game.add.audio('noise');
 		music.loop = true;
 		music.play();*/
-		
+
 		hook.sprite = game.add.sprite(game.world.centerX, game.world.centerY, "hook");
 		hook.sprite.anchor.setTo(0.5, 0.5); 
+		hook.armsprite = game.add.tileSprite(0, 0, 22, 20, "arm");
+		hook.armsprite.anchor.setTo(0, 0.5);//center x to align but leave y to not shoot ahead
 
 		var cheese = game.add.sprite(game.world.centerX, game.world.centerY, "cheese");
 		cheese.anchor.setTo(0.5, 0.5);
@@ -218,7 +221,6 @@ window.onload = function() {
 		}
 
 		hook.updatePosition(keys);
-		hook.updateAngle();
 		hook.updateState();
 
 		keys.action = actions.NONE;
