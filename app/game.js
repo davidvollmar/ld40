@@ -93,6 +93,8 @@ window.onload = function() {
 		keys.keyRightArrow = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 
 		//the left and right keys we want to be able to keep pressing, but spacebar should be a one-time hit per press
+		keys.keyShoot = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+		keys.keyShoot.onDown.add(shootPressed);
 		keys.keyShoot = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		keys.keyShoot.onDown.add(shootPressed);
 
