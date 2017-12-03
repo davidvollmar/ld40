@@ -1,5 +1,12 @@
 var game;
 
+var actions = {
+	NONE: 0,
+	LEFT : 1,
+	RIGHT: 2,
+	SHOOT: 4
+}
+
 window.onload = function() {
 	//magic numbers
 	var windowWidth = 800;
@@ -18,11 +25,15 @@ window.onload = function() {
 	//declare other variables
 	var keys = {
 		keyLeft: null, 
+		keyLeftArrow: null,
 		keyRight: null,
+		keyRightArrow: null,
 		keyShoot: null,
 		shootPressed: false,
-		keyRestart: null
-	};
+		keyRestart: null,
+		action: actions.NONE
+	};	
+
 	var hook = new Hook();
 	var mice = [];
 	var curledMice = [];
@@ -40,15 +51,15 @@ window.onload = function() {
 		game.load.image("background", "assets/background.jpeg");
 		//game.load.audio('noise', ['assets/annoyingnoise.mp3']);
 
-		//game.load.image("hook", "assets/diamond.png");
 		game.load.image("hook", "assets/claw.png");
-		//game.load.image("fullhook", "assets/star.png");
 		game.load.image("fullhook", "assets/fullclaw.png");
 
 		game.load.image("cheese", "assets/cheese.png");
 	
 		game.load.spritesheet('mouse', 'assets/mouse2.png', 720, 1430, 2);
 		game.load.image("mouse_with_cheese", "assets/mouse_with_cheese.png");
+
+		game.input.addPointer();
 	}
 
 	function create () {
@@ -66,7 +77,11 @@ window.onload = function() {
 
 		//Define input keys
 		keys.keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
-		keys.keyRight = game.input.keyboard.addKey(Phaser.Keyboard.D);
+		keys.keyLeftArrow = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);		
+	
+		keys.keyRight = game.input.keyboard.addKey(Phaser.Keyboard.D);		
+		keys.keyRightArrow = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+
 		//the left and right keys we want to be able to keep pressing, but spacebar should be a one-time hit per press
 		keys.keyShoot = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		keys.keyShoot.onDown.add(shootPressed);
@@ -106,6 +121,7 @@ window.onload = function() {
 	function shootPressed() {
 		if(!hook.pulling && !hook.shooting) {
 			keys.shootPressed = true;
+			keys.action = actions.SHOOT;
 		}
 	}
 
@@ -135,13 +151,35 @@ window.onload = function() {
 
 	function update() {
 		if(!gameover) {
+			updateInput();
 			resolveCollisions();
 			updateHook();
 			updateMice();
 			updateCurledMice();
 			updateGameState();
-		}
+		}		
 	}	
+
+	function updateInput() {
+		var _ptr = game.input.pointer1;
+
+		if(_ptr.active) {
+			console.log(_ptr.x);
+			if(_ptr.x < windowWidth/2){				
+				keys.action = actions.LEFT;
+			} else {
+				keys.action = actions.RIGHT;
+			}
+		}
+
+
+		if(keys.keyLeft.isDown || keys.keyLeftArrow.isDown) {
+			keys.action = actions.LEFT;
+		}
+		if(keys.keyRight.isDown || keys.keyRightArrow.isDown) {
+			keys.action = actions.RIGHT;
+		}
+	}
 
 	function updateGameState() {
 		if(cheeseLeft <= 0) {
@@ -159,7 +197,9 @@ window.onload = function() {
 
 		hook.updatePosition(keys);
 		hook.updateAngle();
-		hook.updateState();
+		hook.updateState();		
+
+		keys.action = actions.NONE;
 	}
 
 	function updateCurledMice() {
@@ -337,7 +377,7 @@ window.onload = function() {
 	}
 
 	function updateScoreTexts() {		
-		cheeseLeftText.setText("Cheese Left: " + cheeseLeft + "!");
-		scoreText.setText("Score: " + score + "!");
+		cheeseLeftText.setText("Cheese Left: " + cheeseLeft);
+		scoreText.setText("Score: " + score);
 	}
 };
