@@ -4,10 +4,14 @@ window.onload = function() {
 	//magic numbers
 	var windowWidth = 800;
 	var windowHeight = 600;
-	var cheeseLeft = 8; //whenever a mouse takes a piece, cheese--. if cheese == 0, game over
-	var score = 0;
-	var mouseSpawningProbability = 0.01;
-	var maximumNrOfMice = 10;
+	
+	var cheeseLeft; //whenever a mouse takes a piece, cheese--. if cheese == 0, game over
+	var score;
+	var mouseSpawningProbability;
+	var maximumNrOfMice;
+	var gameover = false;
+
+	initMagicNumbers();
 
 	//game init
 	game = new Phaser.Game(windowWidth, windowHeight, Phaser.AUTO, "", { preload: preload, create: create, update: update });	
@@ -16,7 +20,8 @@ window.onload = function() {
 		keyLeft: null, 
 		keyRight: null,
 		keyShoot: null,
-		shootPressed: false
+		shootPressed: false,
+		keyRestart: null
 	};
 	var hook = new Hook();
 	var mice = [];
@@ -24,6 +29,13 @@ window.onload = function() {
 
 	//GAME INIT FUNCTIONS
 	
+	function initMagicNumbers() {
+		cheeseLeft = 8;
+		score = 0;
+		mouseSpawningProbability = 0.01;
+		maximumNrOfMice = 10;
+	}
+
 	function preload () {
 		game.load.image("background", "assets/background.jpeg");
 
@@ -54,6 +66,9 @@ window.onload = function() {
 		keys.keyShoot = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		keys.keyShoot.onDown.add(shootPressed);
 
+		keys.keyRestart = game.input.keyboard.addKey(Phaser.Keyboard.R);
+		keys.keyRestart.onDown.add(restartPressed);
+
 		//initialize 
 		hook.currentRadius = hook.defaultRadius;
 
@@ -70,8 +85,15 @@ window.onload = function() {
 	    	align: "left"	    	
 	    });
 
+	    deadText = game.add.text(game.world.centerX, game.world.centerY, "", {
+			font: "64px Arial",
+    		fill: "#ffffff",
+    		align: "left"	
+		});
+		
 	    cheeseLeftText.anchor.setTo(0.5, 0.5);
 	    scoreText.anchor.setTo(0.5, 0.5);
+	    deadText.anchor.setTo(0.5, 0.5);
 	}
 
 	// KEY HANDLERS
@@ -82,20 +104,44 @@ window.onload = function() {
 		}
 	}
 
+	function restartPressed() {
+		if(gameover) {
+			for(mouseIndex in mice) {
+				var mouse = mice[mouseIndex];
+				mouse.sprite.destroy();
+			}
+			mice = [];
+
+			for(mouseIndex in curledMice) {
+				var curledMouse = curledMice[mouseIndex];
+				curledMouse.sprite.destroy();
+			}
+			curledMice = [];
+
+			initMagicNumbers();
+			updateScoreTexts();
+
+			deadText.setText("");
+			gameover = false;
+		}
+	}
+
 	// UPDATES
 
 	function update() {
-		resolveCollisions();
-		updateHook();
-		updateMice();
-		updateCurledMice();
-		updateGameState();
+		if(!gameover) {
+			resolveCollisions();
+			updateHook();
+			updateMice();
+			updateCurledMice();
+			updateGameState();
+		}
 	}	
 
 	function updateGameState() {
 		if(cheeseLeft <= 0) {
-			//TODO game over
-			console.log(" TODO game over");
+			gameover = true;
+			deadText.setText("GAME OVER\n Press R to restart");			
 		}
 	}
 
@@ -278,11 +324,16 @@ window.onload = function() {
 
 	function updateLife(delta) {
 		cheeseLeft += delta;
-		cheeseLeftText.setText("Cheese Left: " + cheeseLeft + "!");
+		updateScoreTexts();
 	}
 
 	function updateScore(delta) {
 		score += delta;
+		updateScoreTexts();
+	}
+
+	function updateScoreTexts() {		
+		cheeseLeftText.setText("Cheese Left: " + cheeseLeft + "!");
 		scoreText.setText("Score: " + score + "!");
 	}
 };
