@@ -30,7 +30,7 @@ window.onload = function() {
 	//GAME INIT FUNCTIONS
 	
 	function initMagicNumbers() {
-		cheeseLeft = 8;
+		cheeseLeft = 20;
 		score = 0;
 		mouseSpawningProbability = 0.01;
 		maximumNrOfMice = 10;
@@ -141,7 +141,7 @@ window.onload = function() {
 	function updateGameState() {
 		if(cheeseLeft <= 0) {
 			gameover = true;
-			deadText.setText("GAME OVER\n Press R to restart");			
+			deadText.setText("GAME OVER\n Press R to get more cheese");			
 		}
 	}
 
@@ -329,6 +329,13 @@ window.onload = function() {
 
 	function updateScore(delta) {
 		score += delta;
+
+		//increase difficulty "all" the time
+		if(maximumNrOfMice < 100 && mouseSpawningProbability < 1) {
+			maximumNrOfMice++;
+			mouseSpawningProbability *= 1.02;
+		}
+
 		updateScoreTexts();
 	}
 
