@@ -73,7 +73,7 @@ window.onload = function() {
 
 		var cheese = game.add.sprite(game.world.centerX, game.world.centerY, "cheese");
 		cheese.anchor.setTo(0.5, 0.5);
-		cheese.scale.setTo(0.05, 0.065);
+		cheese.scale.setTo(0.05, 0.0667);
 
 		//Define input keys
 		keys.keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.A);
