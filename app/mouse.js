@@ -7,12 +7,8 @@ class Mouse {
 
         this.collisionDistance = 25 + (3 * this.mouseType);
 
-        this.sprite = game.add.sprite(x, y, 'mouse', 0);
-        this.sprite.scale.setTo(0.05 + (0.01 * this.mouseType), 0.05 + (0.01 * this.mouseType));
-        this.sprite.anchor.setTo(0.5, 0.5);
+        this.setSprite(x, y, "mouse");
 
-        this.animation = this.sprite.animations.add('wiggle');        
-        this.animation.play(10, true);
         this.hasCheese = false;
         this.escaped = false;
         this.pickedupCheese = false;
@@ -22,6 +18,15 @@ class Mouse {
         this.carryingSpeed = 0.0025 + (-0.0005 * this.mouseType);
         
         this.requiredProximity = 30;
+    }
+
+    setSprite(x, y, source) {
+        this.sprite = game.add.sprite(x, y, source, 0);
+        this.sprite.scale.setTo(0.05 + (0.01 * this.mouseType), 0.05 + (0.01 * this.mouseType));
+        this.sprite.anchor.setTo(0.5, 0.5);
+
+        this.animation = this.sprite.animations.add('wiggle');
+        this.animation.play(10, true);
     }
 
     updateMouse() {		

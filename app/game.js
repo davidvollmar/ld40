@@ -60,7 +60,7 @@ window.onload = function() {
 		game.load.image("cheese", "assets/cheese.png");
 	
 		game.load.spritesheet('mouse', 'assets/mouse2.png', 720, 1430, 2);
-		game.load.image("mouse_with_cheese", "assets/mouse_with_cheese.png");
+		game.load.spritesheet('mouse_with_cheese', 'assets/mouse-with-cheese-2.png', 720, 1430, 2);
 
 		game.input.addPointer();
 	}
@@ -206,7 +206,7 @@ window.onload = function() {
 	function updateGameState() {
 		if(cheeseLeft <= 0) {
 			gameover = true;
-			deadText.setText("GAME OVER\n Press R to get more cheese");			
+			deadText.setText("GAME OVER\n Refresh to get more cheese");			
 		}
 	}
 
@@ -257,9 +257,8 @@ window.onload = function() {
 	        	mouse.pickedupCheese = false;
 	        	mouse.animation.destroy();
 	        	mouse.sprite.destroy();
-	        	mouse.sprite = game.add.sprite(mouse.sprite.x, mouse.sprite.y, "mouse_with_cheese");
-	        	mouse.sprite.scale.setTo(0.15, 0.15);
-	        	mouse.sprite.anchor.setTo(0.5, 0.5);
+	        	
+	        	mouse.setSprite(mouse.sprite.x, mouse.sprite.y, "mouse_with_cheese");
 	        	updateLife(-1);
 	        }
 
