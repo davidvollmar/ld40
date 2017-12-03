@@ -245,7 +245,7 @@ window.onload = function() {
 					if (Math.sqrt( 
 						((hook.sprite.x - mouse.sprite.x) * (hook.sprite.x - mouse.sprite.x)) + 
 						((hook.sprite.y - mouse.sprite.y) * (hook.sprite.y - mouse.sprite.y))) <
-						hook.collisionDistance) {
+						mouse.collisionDistance) {
 
 						collidedMouse = mouseindex;
 					}
@@ -331,9 +331,9 @@ window.onload = function() {
 		score += delta;
 
 		//increase difficulty "all" the time
-		if(maximumNrOfMice < 100 && mouseSpawningProbability < 1) {
+		if(maximumNrOfMice <= 50 && mouseSpawningProbability < 1) {
 			maximumNrOfMice++;
-			mouseSpawningProbability *= 1.02;
+			mouseSpawningProbability *= 1.01;
 		}
 
 		updateScoreTexts();

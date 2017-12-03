@@ -2,16 +2,25 @@ class Mouse {
     constructor(x, y) {
         this.originX = x;
         this.originY = y;
+
+        this.mouseType = Math.floor(Math.random() * 5) - 2;//5 types of mice, -2, -1, 0, 1, 2
+
+        this.collisionDistance = 25 + (3 * this.mouseType);
+
         this.sprite = game.add.sprite(x, y, 'mouse', 0);
-        this.sprite.scale.setTo(0.05, 0.05);
+        this.sprite.scale.setTo(0.05 + (0.01 * this.mouseType), 0.05 + (0.01 * this.mouseType));
         this.sprite.anchor.setTo(0.5, 0.5);
+
         this.animation = this.sprite.animations.add('wiggle');        
         this.animation.play(10, true);
         this.hasCheese = false;
         this.escaped = false;
         this.pickedupCheese = false;
-        this.walkingSpeed = 0.01;
-        this.carryingSpeed = 0.0025;
+
+        //make the bigger mice slower than the smaller mice
+        this.walkingSpeed = 0.01 + (-0.002 * this.mouseType);
+        this.carryingSpeed = 0.0025 + (-0.0005 * this.mouseType);
+        
         this.requiredProximity = 30;
     }
 

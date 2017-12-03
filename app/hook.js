@@ -13,7 +13,6 @@ class Hook {
 		this.shootingSpeed = 10;
 		this.pullingMouseSpeed = 3;
 		this.pullingEmptySpeed = 8;
-		this.collisionDistance = 25;
 	}
 
 	updatePosition(keys) {
