@@ -16,6 +16,7 @@ class Hook {
 	}
 
 	updatePosition(keys) {
+		console.log("updating position");
 		if (this.shooting || this.pulling) {
 			if(this.shooting) {
 				this.currentRadius += this.shootingSpeed;
@@ -34,13 +35,13 @@ class Hook {
 		}	
 	}
 
-	updateShooting(keys) {		
-		if (keys.action == actions.SHOOT) {			
-			if (this.caughtMouse) {				
-				this.curledMouse = true;
-			} else {								
-				this.shooting = true;
-			}
+	updateShooting() {		
+		if (this.caughtMouse) {			
+			console.log("caughtMouse");	
+			this.curledMouse = true;
+		} else {		
+			console.log("shooting");							
+			this.shooting = true;
 		}
 	}
 
