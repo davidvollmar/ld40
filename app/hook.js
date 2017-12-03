@@ -25,20 +25,20 @@ class Hook {
 				this.currentRadius -= pullingSpeed;
 			}
 		} else {//so if (!shooting && !pulling) 
-			if (keys.keyLeft.isDown) {
+			if (keys.action == actions.LEFT) {
 				this.sprite.angle -= this.rotationSpeed;
 			}
-			if(keys.keyRight.isDown) {
+			if(keys.action == actions.RIGHT) {
 				this.sprite.angle += this.rotationSpeed;
 			}
 		}	
 	}
 
-	updateShooting(keys) {
-		if (keys.shootPressed) {
-			if (this.caughtMouse) {
+	updateShooting(keys) {		
+		if (keys.action == actions.SHOOT) {			
+			if (this.caughtMouse) {				
 				this.curledMouse = true;
-			} else {				
+			} else {								
 				this.shooting = true;
 			}
 		}
