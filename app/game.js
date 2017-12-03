@@ -5,6 +5,7 @@ window.onload = function() {
 	var windowWidth = 800;
 	var windowHeight = 600;
 	var cheeseLeft = 8; //whenever a mouse takes a piece, cheese--. if cheese == 0, game over
+	var score = 0;
 	var mouseSpawningProbability = 0.01;
 	var maximumNrOfMice = 10;
 
@@ -57,14 +58,20 @@ window.onload = function() {
 		hook.currentRadius = hook.defaultRadius;
 
 		//score text top corner
-		text = game.add.text(130, 30, "Cheese Left: " + cheeseLeft + "!", {
+		cheeseLeftText = game.add.text(130, 30, "Cheese Left: " + cheeseLeft + "!", {
 	        font: "32px Arial",
 	        fill: "#ffffff",
 	        align: "left"
 	    });
 
-	    text.anchor.setTo(0.5, 0.5);
+	    scoreText = game.add.text(130, 60, "Score: " + score + "!", {
+	    	font: "32px Arial",
+	    	fill: "#ffffff",
+	    	align: "left"	    	
+	    });
 
+	    cheeseLeftText.anchor.setTo(0.5, 0.5);
+	    scoreText.anchor.setTo(0.5, 0.5);
 	}
 
 	// KEY HANDLERS
@@ -175,44 +182,10 @@ window.onload = function() {
 
 			//delete caught mouse from mice admin
 			mouseToDelete.sprite.destroy();
-			mice.splice(mouseIndex, 1);			
+			mice.splice(mouseIndex, 1);
+
+			updateScore(1);			
 		}
-	}
-
-	//resolve collisions between curledmice and normal mice
-	function resolveMiceCollisions() {
-		for (curledMouseIndex in curledMice) {
-			var curledMouse = curledMice[curledMouseIndex];
-			var mouseIndex = getCurledMouseCollision(curledMouse);
-			if(mouseIndex >= 0) {
-				//increasing the sprite of the curling mouse, to indicate that we picked up another mouse
-				curledMouse.sprite.scale.setTo(0.1, 0.1);
-
-				//deleting the hit mouse
-				var mouseToDelete = mice[mouseIndex];
-				mouseToDelete.sprite.destroy();
-				mice.splice(mouseIndex, 1);
-			}
-		}		
-	}
-
-	function getCurledMouseCollision(curledMouse) {
-		var collidedMouse = -1;
-		for(mouseIndex in mice) {
-			if(collidedMouse < 0) {
-				var mouse = mice[mouseIndex];
-
-				var distance = Math.sqrt( 
-					((curledMouse.sprite.x - mouse.sprite.x) * (curledMouse.sprite.x - mouse.sprite.x)) + 
-					((curledMouse.sprite.y - mouse.sprite.y) * (curledMouse.sprite.y - mouse.sprite.y))
-				);
-
-				if (distance < curledMouse.collisionDistance) {
-					collidedMouse = mouseIndex;
-				}
-			}
-		}
-		return collidedMouse;
 	}
 
 	function getHookMouseCollision() {
@@ -230,6 +203,44 @@ window.onload = function() {
 
 						collidedMouse = mouseindex;
 					}
+				}
+			}
+		}
+		return collidedMouse;
+	}
+
+	//resolve collisions between curledmice and normal mice
+	function resolveMiceCollisions() {
+		for (curledMouseIndex in curledMice) {
+			var curledMouse = curledMice[curledMouseIndex];
+			var mouseIndex = getCurledMouseCollision(curledMouse);
+			if(mouseIndex >= 0) {
+				//increasing the sprite of the curling mouse, to indicate that we picked up another mouse
+				curledMouse.sprite.scale.setTo(0.1, 0.1);
+
+				//deleting the hit mouse
+				var mouseToDelete = mice[mouseIndex];
+				mouseToDelete.sprite.destroy();
+				mice.splice(mouseIndex, 1);
+
+				updateScore(1);
+			}
+		}		
+	}
+
+	function getCurledMouseCollision(curledMouse) {
+		var collidedMouse = -1;
+		for(mouseIndex in mice) {
+			if(collidedMouse < 0) {
+				var mouse = mice[mouseIndex];
+
+				var distance = Math.sqrt( 
+					((curledMouse.sprite.x - mouse.sprite.x) * (curledMouse.sprite.x - mouse.sprite.x)) + 
+					((curledMouse.sprite.y - mouse.sprite.y) * (curledMouse.sprite.y - mouse.sprite.y))
+				);
+
+				if (distance < curledMouse.collisionDistance) {
+					collidedMouse = mouseIndex;
 				}
 			}
 		}
@@ -267,7 +278,11 @@ window.onload = function() {
 
 	function updateLife(delta) {
 		cheeseLeft += delta;
+		cheeseLeftText.setText("Cheese Left: " + cheeseLeft + "!");
+	}
 
-		text.setText("Cheese Left: " + cheeseLeft + "!");
+	function updateScore(delta) {
+		score += delta;
+		scoreText.setText("Score: " + score + "!");
 	}
 };
