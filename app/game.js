@@ -17,6 +17,8 @@ window.onload = function() {
 	var mouseSpawningProbability;
 	var maximumNrOfMice;
 	var gameover = false;
+	var pointerdown = false;//prevent shooting two times without time in between
+	var pointerdownSleepcount = 0;
 
 	initMagicNumbers();
 
@@ -156,6 +158,15 @@ window.onload = function() {
 			updateMice();
 			updateCurledMice();
 			updateGameState();
+		}
+
+		if(pointerdown) {
+			pointerdownSleepcount++;
+
+			if(pointerdownSleepcount > 30) {
+				pointerdownSleepcount = 0;
+				pointerdown = false;
+			}
 		}		
 	}	
 
@@ -163,13 +174,15 @@ window.onload = function() {
 		var _ptr = game.input.pointer1;
 
 		if(_ptr.active) {
-
 			var dx = _ptr.x - game.world.centerX;
 			var dy = _ptr.y - game.world.centerY;
 
 			//60 because that's the radius of the cheese (I guess)
 			if(Math.sqrt(dx*dx + dy*dy) < 60) {
-				shootPressed();
+				if(!pointerdown) {
+					pointerdown = true;
+					shootPressed();
+				}
 			} else {
 				if(_ptr.x < windowWidth/2){				
 					keys.action = actions.LEFT;
@@ -178,7 +191,6 @@ window.onload = function() {
 				}
 			}
 		}
-
 
 		if(keys.keyLeft.isDown || keys.keyLeftArrow.isDown) {
 			keys.action = actions.LEFT;
