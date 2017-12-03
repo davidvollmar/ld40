@@ -84,7 +84,6 @@ window.onload = function() {
 
 		//the left and right keys we want to be able to keep pressing, but spacebar should be a one-time hit per press
 		keys.keyShoot = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-		keys.keyShoot.onDown.add(shootPressed);
 
 		keys.keyRestart = game.input.keyboard.addKey(Phaser.Keyboard.R);
 		keys.keyRestart.onDown.add(restartPressed);
@@ -117,13 +116,6 @@ window.onload = function() {
 	}
 
 	// KEY HANDLERS
-
-	function shootPressed() {
-		if(!hook.pulling && !hook.shooting) {
-			keys.shootPressed = true;
-			keys.action = actions.SHOOT;
-		}
-	}
 
 	function restartPressed() {
 		if(gameover) {
@@ -178,6 +170,13 @@ window.onload = function() {
 		}
 		if(keys.keyRight.isDown || keys.keyRightArrow.isDown) {
 			keys.action = actions.RIGHT;
+		}
+
+		if(keys.keyShoot.isDown) {
+			if(!hook.pulling && !hook.shooting) {
+			keys.shootPressed = true;
+			keys.action = actions.SHOOT;
+			}
 		}
 	}
 
