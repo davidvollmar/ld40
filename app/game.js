@@ -161,6 +161,18 @@ window.onload = function() {
 	}	
 
 	function updateInput() {
+		var _ptr = game.input.pointer1;
+
+		if(_ptr.active) {
+			console.log(_ptr.x);
+			if(_ptr.x < windowWidth/2){				
+				keys.action = actions.LEFT;
+			} else {
+				keys.action = actions.RIGHT;
+			}
+		}
+
+
 		if(keys.keyLeft.isDown || keys.keyLeftArrow.isDown) {
 			keys.action = actions.LEFT;
 		}
