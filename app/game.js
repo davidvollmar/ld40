@@ -38,6 +38,7 @@ window.onload = function() {
 
 	function preload () {
 		game.load.image("background", "assets/background.jpeg");
+		//game.load.audio('noise', ['assets/annoyingnoise.mp3']);
 
 		game.load.image("hook", "assets/diamond.png");
 		game.load.image("fullhook", "assets/star.png");
@@ -50,6 +51,9 @@ window.onload = function() {
 
 	function create () {
 		background = game.add.tileSprite(0, 0, windowWidth, windowHeight, "background");
+		/*music = game.add.audio('noise');
+		music.loop = true;
+		music.play();*/
 		
 		hook.sprite = game.add.sprite(game.world.centerX, game.world.centerY, "hook");
 		hook.sprite.anchor.setTo(0.5, 0.5); 
