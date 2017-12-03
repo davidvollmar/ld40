@@ -72,13 +72,13 @@ window.onload = function() {
 		hook.currentRadius = hook.defaultRadius;
 
 		//score text top corner
-		cheeseLeftText = game.add.text(130, 30, "Cheese Left: " + cheeseLeft + "!", {
+		cheeseLeftText = game.add.text(130, 30, "Cheese Left: " + cheeseLeft, {
 	        font: "32px Arial",
 	        fill: "#ffffff",
 	        align: "left"
 	    });
 
-	    scoreText = game.add.text(130, 60, "Score: " + score + "!", {
+	    scoreText = game.add.text(130, 60, "Score: " + score, {
 	    	font: "32px Arial",
 	    	fill: "#ffffff",
 	    	align: "left"	    	
