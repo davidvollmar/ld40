@@ -298,15 +298,7 @@ window.onload = function() {
 	function spawnMouse() {
 	    var rand = Math.random();
 	    var offset  = 100; //place the mice 100 outside of the screen, such that the cleaning up is done neatly outside of the view
-	    /*if(rand <= .25) {
-	        return new Mouse(Math.random() * window.screen.width, 0);        
-	    } else if(rand <= .5) {
-	        return new Mouse(Math.random() * window.screen.width, window.screen.height);    
-	    } else if(rand <= .75) {
-	        return new Mouse(0, Math.random() * window.screen.height);
-	    } else {
-	        return new Mouse(window.screen.width, Math.random() * window.screen.height);
-	    }*/
+
 	    if(rand <= .25) {
 	        return new Mouse(Math.random() * windowWidth, 0 - offset);        
 	    } else if(rand <= .5) {
