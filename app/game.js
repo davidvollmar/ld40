@@ -44,7 +44,6 @@ window.onload = function() {
 
 		game.load.image("cheese", "assets/cheese.png");
 	
-		//game.load.image("mouse", "assets/mouse.png");
 		game.load.spritesheet('mouse', 'assets/mouse2.png', 720, 1430, 2);
 		game.load.image("mouse_with_cheese", "assets/mouse_with_cheese.png");
 	}
