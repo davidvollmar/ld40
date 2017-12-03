@@ -44,7 +44,6 @@ window.onload = function() {
 
 		game.load.image("cheese", "assets/cheese.png");
 	
-		//game.load.image("mouse", "assets/mouse.png");
 		game.load.spritesheet('mouse', 'assets/mouse2.png', 720, 1430, 2);
 		game.load.image("mouse_with_cheese", "assets/mouse_with_cheese.png");
 	}
@@ -73,13 +72,13 @@ window.onload = function() {
 		hook.currentRadius = hook.defaultRadius;
 
 		//score text top corner
-		cheeseLeftText = game.add.text(130, 30, "Cheese Left: " + cheeseLeft + "!", {
+		cheeseLeftText = game.add.text(130, 30, "Cheese Left: " + cheeseLeft, {
 	        font: "32px Arial",
 	        fill: "#ffffff",
 	        align: "left"
 	    });
 
-	    scoreText = game.add.text(130, 60, "Score: " + score + "!", {
+	    scoreText = game.add.text(130, 60, "Score: " + score, {
 	    	font: "32px Arial",
 	    	fill: "#ffffff",
 	    	align: "left"	    	
@@ -298,15 +297,7 @@ window.onload = function() {
 	function spawnMouse() {
 	    var rand = Math.random();
 	    var offset  = 100; //place the mice 100 outside of the screen, such that the cleaning up is done neatly outside of the view
-	    /*if(rand <= .25) {
-	        return new Mouse(Math.random() * window.screen.width, 0);        
-	    } else if(rand <= .5) {
-	        return new Mouse(Math.random() * window.screen.width, window.screen.height);    
-	    } else if(rand <= .75) {
-	        return new Mouse(0, Math.random() * window.screen.height);
-	    } else {
-	        return new Mouse(window.screen.width, Math.random() * window.screen.height);
-	    }*/
+
 	    if(rand <= .25) {
 	        return new Mouse(Math.random() * windowWidth, 0 - offset);        
 	    } else if(rand <= .5) {
