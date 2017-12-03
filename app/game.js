@@ -119,7 +119,9 @@ window.onload = function() {
 	// KEY HANDLERS
 
 	function shootPressed() {
-		keys.shootPressed = true;
+		if(hook.canShoot()) {
+			keys.shootPressed = true;	
+		}
 	}
 
 	function restartPressed() {
