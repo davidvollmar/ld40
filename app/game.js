@@ -161,11 +161,19 @@ window.onload = function() {
 		var _ptr = game.input.pointer1;
 
 		if(_ptr.active) {
-			console.log(_ptr.x);
-			if(_ptr.x < windowWidth/2){				
-				keys.action = actions.LEFT;
+
+			var dx = _ptr.x - game.world.centerX;
+			var dy = _ptr.y - game.world.centerY;
+
+			//60 because that's the radius of the cheese (I guess)
+			if(Math.sqrt(dx*dx + dy*dy) < 60) {
+				shootPressed();
 			} else {
-				keys.action = actions.RIGHT;
+				if(_ptr.x < windowWidth/2){				
+					keys.action = actions.LEFT;
+				} else {
+					keys.action = actions.RIGHT;
+				}
 			}
 		}
 
