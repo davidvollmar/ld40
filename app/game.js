@@ -40,8 +40,10 @@ window.onload = function() {
 		game.load.image("background", "assets/background.jpeg");
 		//game.load.audio('noise', ['assets/annoyingnoise.mp3']);
 
-		game.load.image("hook", "assets/diamond.png");
-		game.load.image("fullhook", "assets/star.png");
+		//game.load.image("hook", "assets/diamond.png");
+		game.load.image("hook", "assets/claw.png");
+		//game.load.image("fullhook", "assets/star.png");
+		game.load.image("fullhook", "assets/fullclaw.png");
 
 		game.load.image("cheese", "assets/cheese.png");
 	
