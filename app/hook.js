@@ -1,4 +1,5 @@
 class Hook {
+
 	constructor() {
 		this.armsprite = null;
 		this.sprite = null;
@@ -7,34 +8,57 @@ class Hook {
 		this.maxRadius = 400;
 		this.calcAngle = 0;
 		this.rotationSpeed = 2;
-		this.shooting = false;
-		this.pulling = false;
-		this.caughtMouse = false;
-		this.curledMouse = false;
 		this.shootingSpeed = 10;
 		this.pullingMouseSpeed = 3;
 		this.pullingEmptySpeed = 8;
+		
+		this.state = HookState.HOLDINGEMPTY;
 	}
 
-	updatePosition(keys) {
-		if (this.shooting || this.pulling) {
-			if(this.shooting) {
-				this.currentRadius += this.shootingSpeed;
-			}
-			if(this.pulling) {
-				var pullingSpeed = this.caughtMouse ? this.pullingMouseSpeed : this.pullingEmptySpeed;
-				this.currentRadius -= pullingSpeed;
-			}
-		} else {//so if (!shooting && !pulling) 
-			if (keys.action == actions.LEFT) {
-				this.sprite.angle -= this.rotationSpeed;
-			}
-			if(keys.action == actions.RIGHT) {
-				this.sprite.angle += this.rotationSpeed;
-			}
+	update(action, shoot) {
+		//First, set angle and radius
+		switch(this.state) {
+			case HookState.HOLDINGEMPTY:
+				if(shoot) {
+					this.state = HookState.SHOOTING;
+				} else {
+					this.move(action);
+				}
+				break;
+			case HookState.HOLDINGMOUSE:
+				if(shoot) {
+					this.state = HookState.CURLING;
+				} else {
+					this.move(action);
+				} 				
+				break;
+			case HookState.SHOOTING:
+				this.currentRadius += this.shootingSpeed
+				if(this.currentRadius >= this.maxRadius) {
+					this.state = HookState.PULLINGEMPTY;					
+				}
+				break;				
+			case HookState.CURLING:			
+				this.state = HookState.HOLDINGEMPTY;
+				this.sprite.loadTexture("hook", 0, false);
+				break;
+			case HookState.PULLINGEMPTY:
+				this.currentRadius -= this.pullingEmptySpeed;
+				if(this.currentRadius <= this.defaultRadius) {		
+					this.currentRadius = this.defaultRadius;
+					this.state = HookState.HOLDINGEMPTY;
+				}		
+				break;
+			case HookState.PULLINGMOUSE:						
+				this.currentRadius -= this.pullingMouseSpeed;
+				if(this.currentRadius <= this.defaultRadius) {		
+					this.currentRadius = this.defaultRadius;
+					this.state = HookState.HOLDINGMOUSE;
+				}
+				break;
 		}
 
-
+		//Now: set position based on angle and radius.
 		///angles are defined on a range from -180 to +180
 		//initially angle is 0
 		//we introduce here 'calcAngle' to simplify the calculations for the rotation along the cheese		
@@ -53,31 +77,26 @@ class Hook {
 		this.armsprite.width = Math.sqrt(dx*dx + dy*dy);
 	}
 
-	updateShooting() {		
-		if (this.caughtMouse) {			
-			this.curledMouse = true;
-		} else {		
-			this.shooting = true;
+	move(action) {
+		switch(action) {
+			case actions.LEFT:
+				this.sprite.angle -= this.rotationSpeed;
+				break;
+			case actions.RIGHT:
+				this.sprite.angle += this.rotationSpeed;
+				break;
 		}
 	}
 
-	updateState() {
-		if (this.shooting && (this.currentRadius >= this.maxRadius)) {			
-			this.pulling = true;
-			this.shooting = false;
-		}
-		if (this.pulling && (this.currentRadius <= this.defaultRadius)) {
-			this.pulling = false;
-			this.currentRadius = this.defaultRadius;
-		}	
-		if(this.caughtMouse && this.curledMouse) {
-			this.caughtMouse = false;
-			this.curledMouse = false;
-			this.sprite.loadTexture('hook', 0, false);
-		}
+	collidesWith(mouse) {
+		return Math.sqrt(
+						((this.sprite.x - mouse.sprite.x) * (this.sprite.x - mouse.sprite.x)) + 
+						((this.sprite.y - mouse.sprite.y) * (this.sprite.y - mouse.sprite.y))
+					) < mouse.collisionDistance;
 	}
 
-	canShoot() {		
-		return (!this.shooting && !this.pulling);
+	catchMouse() {
+		this.state = HookState.PULLINGMOUSE;
+		this.sprite.loadTexture("fullhook", 0, false);
 	}
 }

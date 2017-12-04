@@ -3,8 +3,7 @@ var game;
 var actions = {
 	NONE: 0,
 	LEFT : 1,
-	RIGHT: 2,
-	SHOOT: 4
+	RIGHT: 2
 };
 
 window.onload = function() {
@@ -19,6 +18,7 @@ window.onload = function() {
 	var gameover = false;
 	var pointerdown = false;//prevent shooting two times without time in between
 	var pointerdownSleepcount = 0;
+	var shootWasPressed = false;
 
 	var cheeseLeftText;
 	var scoreText;
@@ -35,7 +35,6 @@ window.onload = function() {
 		keyRight: null,
 		keyRightArrow: null,
 		keyShoot: null,
-		shootPressed: false,
 		keyRestart: null,
 		action: actions.NONE
 	};	
@@ -135,9 +134,7 @@ window.onload = function() {
 	// KEY HANDLERS
 
 	function shootPressed() {
-		if(hook.canShoot()) {
-			keys.shootPressed = true;	
-		}
+		this.shootWasPressed = true;
 	}
 
 	function restartPressed() {
@@ -222,36 +219,14 @@ window.onload = function() {
 	}
 
 	function updateHook() {
-		if(keys.shootPressed) {
-			hook.updateShooting();
-			keys.shootPressed = false;
-		}
+		hook.update(keys.action, this.shootWasPressed);
 
-		if (hook.curledMouse) {
+		if (hook.state === HookState.CURLING) {
 			spawnCurleMouse(hook.sprite.x, hook.sprite.y, hook.sprite.rotation + Math.PI);
 		}
 
-		hook.updatePosition(keys);
-		hook.updateState();
-
+		this.shootWasPressed = false;
 		keys.action = actions.NONE;
-	}
-
-	function updateCurledMice() {
-		for(var curledMouseIndex in curledMice) {
-			var curledMouse = curledMice[curledMouseIndex];
-			curledMouse.move();
-
-			//remove if out of bounds
-			if(curledMouse.sprite.x > game.windowWidth || 
-	        	curledMouse.sprite.x < 0 ||
-	        	curledMouse.sprite.y < 0 || 
-	        	curledMouse.sprite.y > game.windowHeight) {
-
-				curledMice.splice(curledMouseIndex, 1);
-				curledMouse.sprite.destroy();
-			}
-		}
 	}
 
 	function updateMice() {
@@ -281,6 +256,23 @@ window.onload = function() {
 	    }
 	}
 
+	function updateCurledMice() {
+		for(var curledMouseIndex in curledMice) {
+			var curledMouse = curledMice[curledMouseIndex];
+			curledMouse.move();
+
+			//remove if out of bounds
+			if(curledMouse.sprite.x > game.windowWidth || 
+	        	curledMouse.sprite.x < 0 ||
+	        	curledMouse.sprite.y < 0 || 
+	        	curledMouse.sprite.y > game.windowHeight) {
+
+				curledMice.splice(curledMouseIndex, 1);
+				curledMouse.sprite.destroy();
+			}
+		}
+	}
+
 	// COLLISION HANDLERS
 
 	function resolveCollisions() {
@@ -292,40 +284,31 @@ window.onload = function() {
 	function resolveHookCollisions() {
 		//first check collisions, then if a collision is found, remove the mouse from the mice array and update hook state
 		var mouseIndex = getHookMouseCollision();
-		if (mouseIndex >= 0) {			
-			var mouseToDelete = mice[mouseIndex];
 
-			//update hook state
-			hook.pulling = true;
-			hook.shooting = false;
-			hook.caughtMouse = true;
+		if (mouseIndex >= 0) {	
+			hook.catchMouse();
+
+			var mouseToDelete = mice[mouseIndex];
 			if(mouseToDelete.hasCheese) {				
 				updateLife(1);
-			}
-
-			hook.sprite.loadTexture("fullhook", 0, false);
+			}			
+			updateScore(1);		
 
 			//delete caught mouse from mice admin
 			mouseToDelete.sprite.destroy();
 			mice.splice(mouseIndex, 1);
-
-			updateScore(1);			
+		
 		}
 	}
 
 	function getHookMouseCollision() {
 		var collidedMouse = -1;
-		if(hook.shooting) {
+		if(hook.state === HookState.SHOOTING) {
 			for(var mouseindex in mice) {
 				if(collidedMouse < 0) {	//only catch 1 mouse at a time
 					var mouse = mice[mouseindex];				
-					//lazy collision detection, just compare distance.
 					//if mouse caught, remove from mice array and change hooksprite to caughtmouse sprite.
-					if (Math.sqrt( 
-						((hook.sprite.x - mouse.sprite.x) * (hook.sprite.x - mouse.sprite.x)) + 
-						((hook.sprite.y - mouse.sprite.y) * (hook.sprite.y - mouse.sprite.y))) <
-						mouse.collisionDistance) {
-
+					if(hook.collidesWith(mouse)) {
 						collidedMouse = mouseindex;
 					}
 				}
