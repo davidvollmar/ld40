@@ -10,7 +10,6 @@ class CurleMouse {
         
         this.distance = 75;
         this.speed = 8;
-        this.collisionDistance = 25;
     }
 
     move() {
@@ -18,5 +17,14 @@ class CurleMouse {
     	this.sprite.x = game.world.centerX + this.distance * Math.cos(this.rotation);
         this.sprite.y = game.world.centerY + this.distance * Math.sin(this.rotation);
         this.sprite.rotation += 0.2;
+    }
+
+    collidesWith(mouse) {
+        var distance = Math.sqrt( 
+            ((this.sprite.x - mouse.sprite.x) * (this.sprite.x - mouse.sprite.x)) + 
+            ((this.sprite.y - mouse.sprite.y) * (this.sprite.y - mouse.sprite.y))
+        );
+
+        return (distance < mouse.collisionDistance);
     }
 }

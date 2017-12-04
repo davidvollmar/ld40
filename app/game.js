@@ -236,23 +236,17 @@ window.onload = function() {
 	    
 	    for(var mouseIndex in mice) {
 	    	var mouse = mice[mouseIndex];
+	    	var beforestate = mouse.state;
 	    	mouse.updateMouse();
-
-	    	//change sprite if picked up cheese
-	    	if(mouse.pickedupCheese) {
-	        	mouse.pickedupCheese = false;
-	        	mouse.animation.destroy();
-	        	mouse.sprite.destroy();
-	        	
-	        	mouse.setSprite(mouse.sprite.x, mouse.sprite.y, "mouse_with_cheese");
-	        	updateLife(-1);
-	        }
-
-	        //remove if escaped with the cheese
-	        if(mouse.escaped) {
-	        	mice.splice(mouseIndex, 1);
-	        	mouse.sprite.destroy();
-	        }
+	    	if(mouse.state !== beforestate) {
+	    		if(mouse.state === MouseState.WALKINGFROM) {
+		        	updateLife(-1);
+	    		}
+	    		if(mouse.state === MouseState.ESCAPED) {
+		        	mice.splice(mouseIndex, 1);
+		        	mouse.sprite.destroy();	    			
+	    		}
+	    	}
 	    }
 	}
 
@@ -289,15 +283,14 @@ window.onload = function() {
 			hook.catchMouse();
 
 			var mouseToDelete = mice[mouseIndex];
-			if(mouseToDelete.hasCheese) {				
+			if(mouseToDelete.state === MouseState.WALKINGFROM) {				
 				updateLife(1);
 			}			
 			updateScore(1);		
 
 			//delete caught mouse from mice admin
 			mouseToDelete.sprite.destroy();
-			mice.splice(mouseIndex, 1);
-		
+			mice.splice(mouseIndex, 1);		
 		}
 	}
 
@@ -341,14 +334,9 @@ window.onload = function() {
 		for(var mouseIndex in mice) {
 			if(collidedMouse < 0) {
 				var mouse = mice[mouseIndex];
-
-				var distance = Math.sqrt( 
-					((curledMouse.sprite.x - mouse.sprite.x) * (curledMouse.sprite.x - mouse.sprite.x)) + 
-					((curledMouse.sprite.y - mouse.sprite.y) * (curledMouse.sprite.y - mouse.sprite.y))
-				);
-
-				if (distance < curledMouse.collisionDistance) {
-					collidedMouse = mouseIndex;
+				
+				if(curledMouse.collidesWith(mouse)) {
+					collidedMouse = mouseIndex;				
 				}
 			}
 		}
