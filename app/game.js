@@ -5,7 +5,7 @@ var actions = {
 	LEFT : 1,
 	RIGHT: 2,
 	SHOOT: 4
-}
+};
 
 window.onload = function() {
 	//magic numbers
@@ -19,6 +19,10 @@ window.onload = function() {
 	var gameover = false;
 	var pointerdown = false;//prevent shooting two times without time in between
 	var pointerdownSleepcount = 0;
+
+	var cheeseLeftText;
+	var scoreText;
+	var deadText;
 
 	initMagicNumbers();
 
@@ -60,14 +64,14 @@ window.onload = function() {
 		game.load.image("cheeseboard", "assets/kaasplank.png");
 		game.load.image("cheese", "assets/cheese.png");
 	
-		game.load.spritesheet('mouse', 'assets/mouse2.png', 720, 1430, 2);
-		game.load.spritesheet('mouse_with_cheese', 'assets/mouse-with-cheese-2.png', 720, 1430, 2);
+		game.load.spritesheet("mouse", "assets/mouse2.png", 720, 1430, 2);
+		game.load.spritesheet("mouse_with_cheese", "assets/mouse-with-cheese-2.png", 720, 1430, 2);
 
 		game.input.addPointer();
 	}
 
 	function create () {
-		background = game.add.tileSprite(0, 0, windowWidth, windowHeight, "background");
+		var background = game.add.tileSprite(0, 0, windowWidth, windowHeight, "background");
 		/*music = game.add.audio('noise');
 		music.loop = true;
 		music.play();*/
@@ -138,13 +142,13 @@ window.onload = function() {
 
 	function restartPressed() {
 		if(gameover) {
-			for(mouseIndex in mice) {
+			for(var mouseIndex in mice) {
 				var mouse = mice[mouseIndex];
 				mouse.sprite.destroy();
 			}
 			mice = [];
 
-			for(mouseIndex in curledMice) {
+			for(var mouseIndex in curledMice) {
 				var curledMouse = curledMice[mouseIndex];
 				curledMouse.sprite.destroy();
 			}
@@ -234,7 +238,7 @@ window.onload = function() {
 	}
 
 	function updateCurledMice() {
-		for(curledMouseIndex in curledMice) {
+		for(var curledMouseIndex in curledMice) {
 			var curledMouse = curledMice[curledMouseIndex];
 			curledMouse.move();
 
@@ -255,7 +259,7 @@ window.onload = function() {
 	        mice.push(spawnMouse());
 	    }
 	    
-	    for(mouseIndex in mice) {
+	    for(var mouseIndex in mice) {
 	    	var mouse = mice[mouseIndex];
 	    	mouse.updateMouse();
 
@@ -299,7 +303,7 @@ window.onload = function() {
 				updateLife(1);
 			}
 
-			hook.sprite.loadTexture('fullhook', 0, false);
+			hook.sprite.loadTexture("fullhook", 0, false);
 
 			//delete caught mouse from mice admin
 			mouseToDelete.sprite.destroy();
@@ -332,7 +336,7 @@ window.onload = function() {
 
 	//resolve collisions between curledmice and normal mice
 	function resolveMiceCollisions() {
-		for (curledMouseIndex in curledMice) {
+		for (var curledMouseIndex in curledMice) {
 			var curledMouse = curledMice[curledMouseIndex];
 			var mouseIndex = getCurledMouseCollision(curledMouse);
 			if(mouseIndex >= 0) {
@@ -351,7 +355,7 @@ window.onload = function() {
 
 	function getCurledMouseCollision(curledMouse) {
 		var collidedMouse = -1;
-		for(mouseIndex in mice) {
+		for(var mouseIndex in mice) {
 			if(collidedMouse < 0) {
 				var mouse = mice[mouseIndex];
 
